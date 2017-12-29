@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>919</width>
-    <height>797</height>
+    <height>888</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -253,14 +253,14 @@
             </item>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <widget class="QPushButton" name="pushButton_videoCalibration">
             <property name="text">
              <string>Calibraion</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="3" column="1">
            <widget class="QPushButton" name="pushButton_videoTracking">
             <property name="text">
              <string>Tracking</string>
@@ -276,6 +276,30 @@
              <string>相机编号</string>
             </property>
            </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QPushButton" name="pushButton_openCamera">
+            <property name="text">
+             <string>Open Cam</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QPushButton" name="pushButton_closeCamera">
+            <property name="text">
+             <string>Close Cam</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>FPS</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="spinBox_videoFPS"/>
           </item>
          </layout>
         </widget>
@@ -512,7 +536,17 @@
      </widget>
     </item>
     <item>
-     <widget class="QWidget" name="widget_Video" native="true"/>
+     <widget class="QWidget" name="widget_3" native="true">
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_video">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
   </widget>

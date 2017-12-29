@@ -62,19 +62,25 @@ MainWindow::MainWindow(QWidget *parent) :
     pitchPosition = 1500;
 
     //Video
-    widget_video = ui->widget_Video;
+    label_video = ui->label_video;
     comboBox_videoResolution = ui->comboBox_videoResolution;
     comboBox_cameraNumber = ui->comboBox_cameraNumber;
     pushButton_videoCalibration = ui->pushButton_videoCalibration;
     pushButton_videoTracking = ui->pushButton_videoTracking;
+    pushButton_openCamera = ui->pushButton_openCamera;
+    pushButton_closeCamera = ui->pushButton_closeCamera;
+    spinBox_videoFPS = ui->spinBox_videoFPS;
+    pTimer = new QTimer();
+
+    spinBox_videoFPS->setValue(30); //FPS then timerTick is 1000/30 ms
+    spinBox_videoFPS->setMaximum(60);
+    spinBox_videoFPS->setMinimum(10);
 
     QStringList cameraNumList;
-    combBox_cameraNumber->addItems(cameraNumList<<"0"<<"1"<<"2"<<"3"<<"4"
+    comboBox_cameraNumber->addItems(cameraNumList<<"0"<<"1"<<"2"<<"3"<<"4"
                                    <<"5"<<"6"<<"7"<<"8"<<"9");
     comboBox_videoResolution->setCurrentIndex(6); //1280*720
-    combBox_cameraNumber->setCurrentIndex(0);
-
-    initVideoCamera();
+    comboBox_cameraNumber->setCurrentIndex(0);
 
     //open and close Serial Port
     connect(pushButton_openSerialPort,&QPushButton::clicked,this,openSerialPort);
@@ -88,7 +94,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(pushButton_initial,&QPushButton::clicked,this,initialServoMotorPosition);
 
     //Video
-
+    connect(pushButton_openCamera,&QPushButton::clicked,this,openCamera);
+    connect(pushButton_closeCamera,&QPushButton::clicked,this,closeCamera);
+    connect(pTimer,&QTimer::timeout,this,nextFrame);
 }
 
 MainWindow::~MainWindow()
@@ -130,6 +138,83 @@ void MainWindow::initialServoMotorPosition()
     time = 1000; //ms
     if(serialPortForServoMotor->servoMotorMove(id,yawPosition,time)) {
          label_yawPosition->setText(QString::number(yawPosition,10));
+    }
+}
+
+bool MainWindow::initVideoCamera()
+{
+    cap.open(comboBox_cameraNumber->currentIndex());
+
+    if( !cap.isOpened() )
+    {
+        qDebug() << "***Could not initialize capturing...***";
+        qDebug() << "Current parameter's value: \n";
+        return false;
+    }
+    qDebug()<<"Camera opened!";
+    return true;
+}
+
+
+void MainWindow::openCamera()
+{
+    VideoResolution videoSize = getVideoResolution();
+    frame = Mat::zeros(videoSize.height, videoSize.width, CV_8UC3);
+    //cap.set(CV_CAP_PROP_FRAME_WIDTH,videoSize.width);
+    //cap.set(CV_CAP_PROP_FRAME_HEIGHT,videoSize.height);
+    //label_video->setFixedWidth(videoSize.width);
+    //label_video->setFixedHeight(videoSize.height);
+
+    if(!initVideoCamera()) {
+        qDebug()<<"Open Camera failed!";
+        return;
+    }
+    else {
+        qDebug()<<spinBox_videoFPS->value();
+        pTimer->setInterval(1000/spinBox_videoFPS->value());
+        pTimer->start();
+    }
+}
+
+void MainWindow::closeCamera()
+{
+    ;
+}
+
+void MainWindow::nextFrame()
+{
+    //采集数据
+    cap>>frame;
+    //处理数据
+
+    //在界面上显示数据
+    Mat2QImage(frame);
+    label_video->setPixmap(QPixmap::fromImage(frameImage)); //暂时先用这个了，比较简单
+}
+
+void MainWindow::Mat2QImage(Mat cvImg)
+{
+    if(cvImg.channels()==3) //3 channels color image
+    {
+        cv::cvtColor(cvImg,cvImg,CV_BGR2RGB);
+        frameImage =QImage((const unsigned char*)(cvImg.data),
+                    cvImg.cols, cvImg.rows,
+                    cvImg.cols*cvImg.channels(),
+                    QImage::Format_RGB888);
+    }
+    else if(cvImg.channels()==1) //grayscale image
+    {
+        frameImage =QImage((const unsigned char*)(cvImg.data),
+                    cvImg.cols,cvImg.rows,
+                    cvImg.cols*cvImg.channels(),
+                    QImage::Format_Indexed8);
+    }
+    else
+    {
+        frameImage =QImage((const unsigned char*)(cvImg.data),
+                    cvImg.cols,cvImg.rows,
+                    cvImg.cols*cvImg.channels(),
+                    QImage::Format_RGB888);
     }
 }
 
@@ -312,20 +397,3 @@ VideoResolution MainWindow::getVideoResolution()
     }
     return videoSize;
 }
-
-bool MainWindow::initVideoCamera()
-{
-    cap.open(comboBox_cameraNumber->currentIndex());
-
-    if( !cap.isOpened() )
-    {
-        qDebug() << "***Could not initialize capturing...***";
-        qDebug() << "Current parameter's value: \n";
-        return false;
-    }
-    return true;
-}
-
-
-
-

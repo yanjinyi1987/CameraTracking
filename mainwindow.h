@@ -10,6 +10,9 @@
 #include <QLabel>
 #include <QSpinBox>
 #include <QWidget>
+#include <QGraphicsView>
+#include <QImage>
+#include <QTimer>
 
 #include <QDebug>
 #include "serialportforservomotor.h"
@@ -40,6 +43,10 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    //Video data sharing
+    VideoCapture cap;
+    Mat frame;
+    QImage frameImage;
 private:
     Ui::MainWindow *ui;
 
@@ -81,15 +88,20 @@ private:
     uint16_t pitchPosition;
 
     //Video part
-    QWidget *widget_video;
+    QLabel *label_video;
     QComboBox *comboBox_videoResolution;
     QComboBox *comboBox_cameraNumber;
     QPushButton *pushButton_videoCalibration;
     QPushButton *pushButton_videoTracking;
+    QPushButton *pushButton_openCamera;
+    QPushButton *pushButton_closeCamera;
+    QSpinBox *spinBox_videoFPS;
 
-    VideoCapture cap;
+    QTimer *pTimer;
     VideoResolution getVideoResolution();
     bool initVideoCamera();
+    void Mat2QImage(Mat cvImg);
+
 
 
 private slots:
@@ -102,6 +114,11 @@ private slots:
     void servoMotorLeft();
     void servoMotorRight();
     void initialServoMotorPosition();
+
+    //Video
+    void openCamera();
+    void closeCamera();
+    void nextFrame();
 
 };
 
