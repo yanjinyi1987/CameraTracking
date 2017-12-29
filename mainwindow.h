@@ -14,9 +14,23 @@
 #include <QDebug>
 #include "serialportforservomotor.h"
 
+//openCV
+#include "opencv2/core/utility.hpp"
+#include "opencv2/video/tracking.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/videoio.hpp"
+#include "opencv2/highgui.hpp"
+
 namespace Ui {
 class MainWindow;
 }
+
+using namespace cv;
+
+struct VideoResolution {
+    int width;
+    int height;
+};
 
 class MainWindow : public QMainWindow
 {
@@ -68,6 +82,14 @@ private:
 
     //Video part
     QWidget *widget_video;
+    QComboBox *comboBox_videoResolution;
+    QComboBox *comboBox_cameraNumber;
+    QPushButton *pushButton_videoCalibration;
+    QPushButton *pushButton_videoTracking;
+
+    VideoCapture cap;
+    VideoResolution getVideoResolution();
+    bool initVideoCamera();
 
 
 private slots:

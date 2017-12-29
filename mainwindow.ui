@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>919</width>
-    <height>739</height>
+    <height>797</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -215,7 +215,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_7">
+           <widget class="QComboBox" name="comboBox_videoResolution">
             <item>
              <property name="text">
               <string>160X120</string>
@@ -251,6 +251,30 @@
               <string>1280X720</string>
              </property>
             </item>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="pushButton_videoCalibration">
+            <property name="text">
+             <string>Calibraion</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="pushButton_videoTracking">
+            <property name="text">
+             <string>Tracking</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="comboBox_cameraNumber"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>相机编号</string>
+            </property>
            </widget>
           </item>
          </layout>

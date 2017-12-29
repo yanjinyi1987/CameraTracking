@@ -63,10 +63,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Video
     widget_video = ui->widget_Video;
+    comboBox_videoResolution = ui->comboBox_videoResolution;
+    comboBox_cameraNumber = ui->comboBox_cameraNumber;
+    pushButton_videoCalibration = ui->pushButton_videoCalibration;
+    pushButton_videoTracking = ui->pushButton_videoTracking;
 
+    QStringList cameraNumList;
+    combBox_cameraNumber->addItems(cameraNumList<<"0"<<"1"<<"2"<<"3"<<"4"
+                                   <<"5"<<"6"<<"7"<<"8"<<"9");
+    comboBox_videoResolution->setCurrentIndex(6); //1280*720
+    combBox_cameraNumber->setCurrentIndex(0);
+
+    initVideoCamera();
 
     //open and close Serial Port
-
     connect(pushButton_openSerialPort,&QPushButton::clicked,this,openSerialPort);
     connect(pushButton_closeSerialPort,&QPushButton::clicked,this,closeSerialPort);
 
@@ -78,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(pushButton_initial,&QPushButton::clicked,this,initialServoMotorPosition);
 
     //Video
+
 }
 
 MainWindow::~MainWindow()
@@ -260,6 +271,59 @@ QSerialPort::FlowControl MainWindow::getFlowControl()
         return QSerialPort::UnknownFlowControl;
         break;
     }
+}
+
+VideoResolution MainWindow::getVideoResolution()
+{
+    VideoResolution videoSize;
+    switch(comboBox_videoResolution->currentIndex()) {
+    case 0: //160x120
+        videoSize.width=160;
+        videoSize.height=120;
+        break;
+    case 1: //320x240
+        videoSize.width=320;
+        videoSize.height=240;
+        break;
+    case 2: //424x240
+        videoSize.width=424;
+        videoSize.height=240;
+        break;
+    case 3: //640x360
+        videoSize.width=640;
+        videoSize.height=360;
+        break;
+    case 4: //800x448
+        videoSize.width=800;
+        videoSize.height=448;
+        break;
+    case 5: //960x544
+        videoSize.width=960;
+        videoSize.height=544;
+        break;
+    case 6: //1280x720
+        videoSize.width=1280;
+        videoSize.height=720;
+        break;
+    default:
+        videoSize.width=1280;
+        videoSize.height=720;
+        break;
+    }
+    return videoSize;
+}
+
+bool MainWindow::initVideoCamera()
+{
+    cap.open(comboBox_cameraNumber->currentIndex());
+
+    if( !cap.isOpened() )
+    {
+        qDebug() << "***Could not initialize capturing...***";
+        qDebug() << "Current parameter's value: \n";
+        return false;
+    }
+    return true;
 }
 
 
